@@ -103,14 +103,14 @@ Thanks to https://stackoverflow.com/a/2238589"
                (my=buffer-relevant-p curr-buff))
       (setq my=last-edited-buffer curr-buff))))
 
-(defun my=goto-last-edited-place ()
+(defun my=jump-last-edited-place ()
   (interactive)
   (message "Running %s" "my=jump-last-edited-place")
   (let* (
          (was-not-killed (if (buffer-name my=last-edited-buffer) t))
          )
     (message "%s defined %s; was-killed: %s; relevant %s; changed: %s;"
-             "[my=goto-last-edited-place]"
+             "[my=jump-last-edited-place]"
              (if my=last-edited-buffer t)
              was-not-killed
              (my=buffer-relevant-p my=last-edited-buffer)
@@ -146,8 +146,8 @@ Thanks to https://stackoverflow.com/a/2238589"
 ;;       (add-to-list 'after-change-functions 'my=save-last-edited-place))
 
 ;; Map it to `WinKey + F10':
-;;   (global-set-key (kbd "<s-f10>") 'my=goto-last-edited-place)
+;;   (global-set-key (kbd "<s-f10>") 'my=jump-last-edited-place)
 ;; or remap it completely if you're brave enough:
-;;   (global-set-key [remap goto-last-change] 'my=goto-last-edited-place)
+;;   (global-set-key [remap goto-last-change] 'my=jump-last-edited-place)
 
 (provide 'jump-last)
