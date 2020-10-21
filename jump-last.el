@@ -1,3 +1,24 @@
+;;; jump-last.el --- Jump to the Last Edit Location, regardless of the file.
+
+;; Copyright (C) 2020 Rostislav Svoboda
+
+;; Authors: Rostislav Svoboda <Rostislav.Svoboda@gmail.com>
+;; Version: 0.1
+;; Package-Requires: ((goto-chg "1.7.3"))
+;; Keywords:
+;; URL: https://github.com/Bost/jump-last
+
+;;; Installation:
+;; In the `dotspacemacs/user-config', add there:
+;;   (use-package jump-last)
+;; then, in the `dotspacemacs-additional-packages', add there:
+;;   (jump-last :location
+;;              (recipe :fetcher github :repo "Bost/jump-last"))
+;; or:
+;;   $ git clone https://github.com/Bost/jump-last
+;; and then
+;;   (jump-last :location "<path/to/the/cloned-repo>")
+
 (require 'goto-chg)
 
 (setq my=unwanted-modes
