@@ -48,7 +48,7 @@
         minibuffer-inactive-mode ; for *Minibuf-1*
         ))
 
-(defun my=buffer-mode (buffer-or-string)
+(defun my=buffer-major-mode (buffer-or-string)
   "Returns the major mode associated with a buffer.
 Thanks to https://stackoverflow.com/a/2238589"
   (when buffer-or-string
@@ -60,7 +60,7 @@ Thanks to https://stackoverflow.com/a/2238589"
 ;; (dolist (mode (buffer-list))
 ;;   (message "%s; relevant %s"
 ;;            mode
-;;            (if (provided-mode-derived-p (my=buffer-mode mode) 'prog-mode 'text-mode)
+;;            (if (provided-mode-derived-p (my=buffer-major-mode mode) 'prog-mode 'text-mode)
 ;;                t)))
 
 ;; The https://stackoverflow.com/a/8627634 doesn't work and its home page
@@ -79,7 +79,7 @@ Thanks to https://stackoverflow.com/a/2238589"
 
 (defun my=buffer-relevant-p (buffer-or-name)
   (let* (
-         (buffer-major-mode (my=buffer-mode buffer-or-name))
+         (buffer-major-mode (my=buffer-major-mode buffer-or-name))
          (my=buffer-relevant
          ;; `provided-mode-derived-p' is available starting from Emacs 26, so we
          ;; need to check if the is defined.
