@@ -51,8 +51,9 @@
 (defun my=buffer-mode (buffer-or-string)
   "Returns the major mode associated with a buffer.
 Thanks to https://stackoverflow.com/a/2238589"
-  (with-current-buffer buffer-or-string
-    major-mode))
+  (when buffer-or-string
+    (with-current-buffer buffer-or-string
+      major-mode)))
 
 ;; (message "%s" ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
