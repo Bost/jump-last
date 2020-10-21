@@ -27,6 +27,20 @@
         minibuffer-inactive-mode ; for *Minibuf-1*
         ))
 
+(defun my=buffer-mode (buffer-or-string)
+  "Returns the major mode associated with a buffer.
+Thanks to https://stackoverflow.com/a/2238589"
+  (with-current-buffer buffer-or-string
+    major-mode))
+
+;; (message "%s" ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+;; (dolist (mode (buffer-list))
+;;   (message "%s; relevant %s"
+;;            mode
+;;            (if (provided-mode-derived-p (my=buffer-mode mode) 'prog-mode 'text-mode)
+;;                t)))
+
 ;; The https://stackoverflow.com/a/8627634 doesn't work and its home page
 ;; http://shenfeng.me/emacs-last-edit-location.html doesn't exit anymore anyway
 
@@ -37,47 +51,68 @@
   `buffer-file-name' returns nil when in the *scratch* buffer."
   (current-buffer))
 
-(defun my=last-edited-buffer-changed ()
-  (not (equal (my=current-buffer) my=last-edited-buffer)))
+(defun my=last-edited-buffer-changed-p ()
+  (if (not (equal (my=current-buffer) my=last-edited-buffer))
+      t))
+
+(defun my=buffer-relevant-p (buffer-or-name)
+  (let* (
+         (buffer-major-mode (my=buffer-mode buffer-or-name))
+         (my=buffer-relevant
+         ;; `provided-mode-derived-p' is available starting from Emacs 26, so we
+         ;; need to check if the is defined.
+         ;;
+         ;; Note:
+         ;; Spacemacs (master) requires Emacs 24.4 or above.
+         ;; Spacemacs (develop) requires Emacs 25.1 or above See
+         ;; https://github.com/syl20bnr/spacemacs#prerequisites
+         (if (fboundp 'provided-mode-derived-p)
+             (provided-mode-derived-p buffer-major-mode 'prog-mode 'text-mode)
+           (not (find buffer-major-mode my=unwanted-modes)))))
+    (if my=buffer-relevant t)))
 
 (defun my=save-last-edited-buffer (n &optional c)
   (let* (
-         (changed (my=last-edited-buffer-changed))
-         (ignored (if (find major-mode my=unwanted-modes) t))
+         (curr-buff (my=current-buffer))
          )
-    ;; (message "%s changed: %s; ignored: %s"
-    ;;          "[my=save-last-edited-buffer]" changed ignored)
-    (when (and changed (not ignored))
-        (setq my=last-edited-buffer (my=current-buffer)))))
+    (message "%s changed: %s; ignored: %s"
+             "[my=save-last-edited-buffer]"
+             (my=last-edited-buffer-changed-p) (my=buffer-relevant-p curr-buff))
+    (when (and (my=last-edited-buffer-changed-p)
+               (my=buffer-relevant-p curr-buff))
+      (setq my=last-edited-buffer curr-buff))))
 
 (defun my=goto-last-edited-place ()
   (interactive)
+  (message "Running %s" "my=jump-last-edited-place")
   (let* (
-
-
-         (changed (my=last-edited-buffer-changed))
-         (was-killed (if (not (buffer-name my=last-edited-buffer)) t))
-         (undefined (if my=last-edited-buffer nil t))
-         (ignored (if (find major-mode my=unwanted-modes) t))
+         (was-not-killed (if (buffer-name my=last-edited-buffer) t))
          )
-    ;; (message "%s undefined %s; was-killed: %s; ignored %s; changed: %s;"
-    ;;          "[my=goto-last-edited-place]"
-    ;;          undefined was-killed ignored changed)
-    (when (and changed (not (or undefined was-killed ignored)))
+    (message "%s defined %s; was-killed: %s; relevant %s; changed: %s;"
+             "[my=goto-last-edited-place]"
+             (if my=last-edited-buffer t)
+             was-not-killed
+             (my=buffer-relevant-p my=last-edited-buffer)
+             (my=last-edited-buffer-changed-p))
+    (when (and (my=last-edited-buffer-changed-p)
+               (my=buffer-relevant-p my=last-edited-buffer)
+               ;; has been set, i.e. does it have a non-nil value?
+               my=last-edited-buffer
+               was-not-killed)
       (pop-to-buffer my=last-edited-buffer))
     (goto-last-change nil)))
 
 (dolist (symb '(
                 self-insert-command
                 delete-char
-                ;; advising evil functions doesn't work
+                ;; advising following evil functions doesn't work:
                 ;; evil-insert evil-delete evil-append
                 ))
   (advice-add symb :after #'my=save-last-edited-buffer)
   ;; (advice-remove symb #'my=save-last-edited-buffer)
   )
 
-;; TODO better approach: define a list of hooks for major or minor modes.
+;; TODO try another approach: define a list of hooks for major or minor modes.
 ;; See also https://www.emacswiki.org/emacs/List_Of_Major_And_Minor_Modes
 ;; (dolist (symb '(text-mode-hook emacs-lisp-mode-hook))
 ;;   (add-hook symb 'my=save-last-edited-buffer)
