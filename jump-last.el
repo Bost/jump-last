@@ -3,6 +3,7 @@
 ;; Copyright (C) 2020 Rostislav Svoboda
 
 ;; Authors: Rostislav Svoboda <Rostislav.Svoboda@gmail.com>
+;;          Daniel Nicolai <dalanicolai@gmail.com>
 ;; Version: 0.1
 ;; Package-Requires: ((goto-chg "1.7.3"))
 ;; Keywords:
