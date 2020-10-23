@@ -22,21 +22,15 @@
 
 (require 'goto-chg)
 
-(defun my=buffer-major-mode (buffer-or-string)
-  "Returns the major mode associated with a buffer.
-Thanks to https://stackoverflow.com/a/2238589"
-  (when buffer-or-string
-    (with-current-buffer buffer-or-string
-      major-mode)))
-
 ;; TODO Convert my=last-edited-buffer to a list and access its elements with
 ;; push/pop then add-hook on the kill-buffer-hook which removes current buffer
 ;; from this list
 (setq my=last-edited-buffer nil)
 
 (defun my=current-buffer ()
-  "See also `window-buffer' and `buffer-file-name', however the
-  `buffer-file-name' returns nil when in the *scratch* buffer."
+  "See also `window-buffer', `buffer-name' and
+  `buffer-file-name', however the `buffer-file-name' returns nil
+  when in the *scratch* buffer."
   (current-buffer))
 
 (defun my=last-edited-buffer-changed-p ()
@@ -71,7 +65,7 @@ Thanks to https://stackoverflow.com/a/2238589"
   ;; (remove-hook hook 'my=register)
   )
 
-;; Map it to `WinKey + F10':
+;; Map it to e.g. `WinKey + F10':
 ;;   (global-set-key (kbd "<s-f10>") 'my=jump-last-edited-place)
 ;; or remap it completely if you're brave enough:
 ;;   (global-set-key [remap goto-last-change] 'my=jump-last-edited-place)
