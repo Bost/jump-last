@@ -27,19 +27,18 @@
 ;; from this list
 (setq my=last-edited-buffer nil)
 
-(defun my=current-buffer ()
+(defun my=last-edited-buffer-changed-p ()
   "See also `window-buffer', `buffer-name' and
   `buffer-file-name', however the `buffer-file-name' returns nil
   when in the *scratch* buffer."
-  (current-buffer))
-
-(defun my=last-edited-buffer-changed-p ()
-  (if (not (equal (my=current-buffer) my=last-edited-buffer))
-      t))
+  (not (equal (current-buffer) my=last-edited-buffer)))
 
 (defun my=save-last-edited-buffer (beg end length)
+  "See also `window-buffer', `buffer-name' and
+  `buffer-file-name', however the `buffer-file-name' returns nil
+  when in the *scratch* buffer."
   (when (my=last-edited-buffer-changed-p)
-    (setq my=last-edited-buffer (my=current-buffer))))
+    (setq my=last-edited-buffer (current-buffer))))
 
 (defun my=jump-last-edited-place ()
   (interactive)
