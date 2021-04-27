@@ -31,7 +31,10 @@
   "See also `window-buffer', `buffer-name' and
   `buffer-file-name', however the `buffer-file-name' returns nil
   when in the *scratch* buffer."
-  (not (equal (current-buffer) my=last-edited-buffer)))
+  (and
+   (not (equal (current-buffer) my=last-edited-buffer))
+   (not (string= " markdown-code-fontification:clojure-mode" (buffer-name))))
+  )
 
 (defun my=save-last-edited-buffer (beg end length)
   "See also `window-buffer', `buffer-name' and
@@ -50,7 +53,8 @@
          ;; ... as has not been killed
          (buffer-name my=last-edited-buffer))
     (pop-to-buffer my=last-edited-buffer))
-  (goto-last-change nil))
+  (goto-last-change nil)
+  (recenter-top-bottom))
 
 (defun my=register ()
   (interactive)
